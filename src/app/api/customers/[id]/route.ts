@@ -23,12 +23,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
           include: {
             product: true,
             employee: { select: { id: true, name: true, role: true } },
-            installments: { orderBy: { dueDate: 'asc' } },
           },
-          orderBy: { createdAt: 'desc' },
-        },
-        contactLogs: {
-          include: { employee: { select: { id: true, name: true, role: true } } },
           orderBy: { createdAt: 'desc' },
         },
       },
@@ -38,23 +33,14 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       return NextResponse.json({ error: 'العميل غير موجود' }, { status: 404 })
     }
 
-    const today = new Date()
-    today.setHours(0, 0, 0, 0)
     const totalPurchases = customer.sales.reduce((sum, s) => sum + s.totalPrice, 0)
-    const totalPaid = customer.sales.reduce((sum, s) => {
-      if (s.saleType === 'cash') return sum + s.totalPrice // cash = fully paid
-      return sum + s.downPayment + s.installments.filter(i => i.status === 'paid').reduce((s2, i) => s2 + i.amount, 0)
-    }, 0)
-    const latePayments = customer.sales.reduce((count, s) => {
-      return count + s.installments.filter(i => i.status === 'unpaid' && new Date(i.dueDate) < today).length
-    }, 0)
 
     return NextResponse.json({
       ...customer,
       totalPurchases,
-      totalPaid,
-      totalDue: totalPurchases - totalPaid,
-      latePayments,
+      totalPaid: totalPurchases,
+      totalDue: 0,
+      latePayments: 0,
       salesCount: customer.sales.length,
     })
   } catch (error) {
@@ -101,7 +87,6 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
 
   try {
     const { id } = await params
-    // Soft delete — preserve all data for recovery
     await db.customer.update({ where: { id }, data: { deletedAt: new Date() } })
     return NextResponse.json({ success: true })
   } catch (error) {

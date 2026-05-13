@@ -18,28 +18,14 @@ export async function GET(request: NextRequest) {
     const customers = await db.customer.findMany({
       where: { deletedAt: null },
       include: {
-        sales: { include: { installments: true } },
-        contactLogs: {
-          include: { employee: { select: { id: true, name: true, role: true } } },
-          orderBy: { createdAt: 'desc' },
-        },
+        sales: true,
       },
       orderBy: { createdAt: 'desc' },
     })
 
-    const today = new Date()
-    today.setHours(0, 0, 0, 0)
-
     const customersWithStats = customers.map(customer => {
       const salesCount = customer.sales.length
       const totalPurchases = customer.sales.reduce((sum, s) => sum + s.totalPrice, 0)
-      const totalPaid = customer.sales.reduce((sum, s) => {
-        if (s.saleType === 'cash') return sum + s.totalPrice // cash = fully paid
-        return sum + s.downPayment + s.installments.filter(i => i.status === 'paid').reduce((s2, i) => s2 + i.amount, 0)
-      }, 0)
-      const latePayments = customer.sales.reduce((count, s) => {
-        return count + s.installments.filter(i => i.status === 'unpaid' && new Date(i.dueDate) < today).length
-      }, 0)
 
       return {
         id: customer.id,
@@ -50,10 +36,9 @@ export async function GET(request: NextRequest) {
         createdAt: customer.createdAt,
         salesCount,
         totalPurchases,
-        totalPaid,
-        totalDue: totalPurchases - totalPaid,
-        latePayments,
-        contactLogs: customer.contactLogs,
+        totalPaid: totalPurchases,
+        totalDue: 0,
+        latePayments: 0,
       }
     })
 

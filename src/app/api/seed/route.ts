@@ -1,11 +1,14 @@
 import { db } from '@/lib/db'
 import { NextRequest, NextResponse } from 'next/server'
 import bcrypt from 'bcryptjs'
-import { requireOwner, isAuthError } from '@/lib/auth'
+import { requireAuth, requireOwner, isAuthError } from '@/lib/auth'
 
 export async function GET(request: NextRequest) {
-  const auth = await requireOwner(request)
+  const auth = await requireAuth(request)
   if (isAuthError(auth)) return auth
+
+  const ownerError = requireOwner(auth)
+  if (ownerError) return ownerError
 
   if (process.env.NODE_ENV === 'production') {
     return NextResponse.json({ error: 'غير متاح في بيئة الإنتاج' }, { status: 403 })
@@ -67,7 +70,7 @@ export async function GET(request: NextRequest) {
     const today = new Date()
     const formatStr = (d: Date) => d.toISOString().split('T')[0]
 
-    // Create sales
+    // Create cash sales
     await db.sale.create({
       data: {
         customerId: customers[0].id,
@@ -87,22 +90,12 @@ export async function GET(request: NextRequest) {
         customerId: customers[1].id,
         productId: products[0].id,
         employeeId: owner.id,
-        saleType: 'installment',
+        saleType: 'cash',
         totalPrice: 52000,
-        downPayment: 10000,
-        installmentCount: 6,
-        monthlyAmount: 7000,
-        startDate: formatStr(new Date(today.getTime() - 90 * 24 * 60 * 60 * 1000)),
-        installments: {
-          create: [
-            { dueDate: formatStr(new Date(today.getTime() - 60 * 24 * 60 * 60 * 1000)), amount: 7000, status: 'paid', paidAt: formatStr(new Date(today.getTime() - 55 * 24 * 60 * 60 * 1000)), receivedBy: owner.id },
-            { dueDate: formatStr(new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000)), amount: 7000, status: 'paid', paidAt: formatStr(new Date(today.getTime() - 28 * 24 * 60 * 60 * 1000)), receivedBy: owner.id },
-            { dueDate: formatStr(today), amount: 7000, status: 'unpaid' },
-            { dueDate: formatStr(new Date(today.getTime() + 30 * 24 * 60 * 60 * 1000)), amount: 7000, status: 'unpaid' },
-            { dueDate: formatStr(new Date(today.getTime() + 60 * 24 * 60 * 60 * 1000)), amount: 7000, status: 'unpaid' },
-            { dueDate: formatStr(new Date(today.getTime() + 90 * 24 * 60 * 60 * 1000)), amount: 7000, status: 'unpaid' },
-          ]
-        }
+        downPayment: 52000,
+        installmentCount: 0,
+        monthlyAmount: 0,
+        startDate: formatStr(new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000)),
       }
     })
 
@@ -111,22 +104,12 @@ export async function GET(request: NextRequest) {
         customerId: customers[2].id,
         productId: products[1].id,
         employeeId: employee.id,
-        saleType: 'installment',
+        saleType: 'cash',
         totalPrice: 33000,
-        downPayment: 5000,
-        installmentCount: 6,
-        monthlyAmount: 4667,
-        startDate: formatStr(new Date(today.getTime() - 120 * 24 * 60 * 60 * 1000)),
-        installments: {
-          create: [
-            { dueDate: formatStr(new Date(today.getTime() - 90 * 24 * 60 * 60 * 1000)), amount: 4667, status: 'paid', paidAt: formatStr(new Date(today.getTime() - 88 * 24 * 60 * 60 * 1000)), receivedBy: employee.id },
-            { dueDate: formatStr(new Date(today.getTime() - 60 * 24 * 60 * 60 * 1000)), amount: 4667, status: 'unpaid' },
-            { dueDate: formatStr(new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000)), amount: 4667, status: 'unpaid' },
-            { dueDate: formatStr(today), amount: 4667, status: 'unpaid' },
-            { dueDate: formatStr(new Date(today.getTime() + 30 * 24 * 60 * 60 * 1000)), amount: 4667, status: 'unpaid' },
-            { dueDate: formatStr(new Date(today.getTime() + 60 * 24 * 60 * 60 * 1000)), amount: 4667, status: 'unpaid' },
-          ]
-        }
+        downPayment: 33000,
+        installmentCount: 0,
+        monthlyAmount: 0,
+        startDate: formatStr(new Date(today.getTime() - 14 * 24 * 60 * 60 * 1000)),
       }
     })
 
@@ -135,19 +118,12 @@ export async function GET(request: NextRequest) {
         customerId: customers[3].id,
         productId: products[2].id,
         employeeId: owner.id,
-        saleType: 'installment',
+        saleType: 'cash',
         totalPrice: 10500,
-        downPayment: 3000,
-        installmentCount: 3,
-        monthlyAmount: 2500,
-        startDate: formatStr(new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000)),
-        installments: {
-          create: [
-            { dueDate: formatStr(today), amount: 2500, status: 'unpaid' },
-            { dueDate: formatStr(new Date(today.getTime() + 30 * 24 * 60 * 60 * 1000)), amount: 2500, status: 'unpaid' },
-            { dueDate: formatStr(new Date(today.getTime() + 60 * 24 * 60 * 60 * 1000)), amount: 2500, status: 'unpaid' },
-          ]
-        }
+        downPayment: 10500,
+        installmentCount: 0,
+        monthlyAmount: 0,
+        startDate: formatStr(new Date(today.getTime() - 3 * 24 * 60 * 60 * 1000)),
       }
     })
 
@@ -156,28 +132,18 @@ export async function GET(request: NextRequest) {
         customerId: customers[4].id,
         productId: products[4].id,
         employeeId: employee.id,
-        saleType: 'installment',
+        saleType: 'cash',
         totalPrice: 22000,
-        downPayment: 4000,
-        installmentCount: 6,
-        monthlyAmount: 3000,
-        startDate: formatStr(new Date(today.getTime() - 150 * 24 * 60 * 60 * 1000)),
-        installments: {
-          create: [
-            { dueDate: formatStr(new Date(today.getTime() - 120 * 24 * 60 * 60 * 1000)), amount: 3000, status: 'paid', paidAt: formatStr(new Date(today.getTime() - 118 * 24 * 60 * 60 * 1000)), receivedBy: owner.id },
-            { dueDate: formatStr(new Date(today.getTime() - 90 * 24 * 60 * 60 * 1000)), amount: 3000, status: 'paid', paidAt: formatStr(new Date(today.getTime() - 85 * 24 * 60 * 60 * 1000)), receivedBy: owner.id },
-            { dueDate: formatStr(new Date(today.getTime() - 60 * 24 * 60 * 60 * 1000)), amount: 3000, status: 'unpaid' },
-            { dueDate: formatStr(new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000)), amount: 3000, status: 'unpaid' },
-            { dueDate: formatStr(today), amount: 3000, status: 'unpaid' },
-            { dueDate: formatStr(new Date(today.getTime() + 30 * 24 * 60 * 60 * 1000)), amount: 3000, status: 'unpaid' },
-          ]
-        }
+        downPayment: 22000,
+        installmentCount: 0,
+        monthlyAmount: 0,
+        startDate: formatStr(new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000)),
       }
     })
 
     // Create expenses
     await Promise.all([
-      db.expense.create({ data: { category: 'إيجار', amount: 5000, date: formatStr(today), note: 'إيجار المحل شهر يناير' } }),
+      db.expense.create({ data: { category: 'إيجار', amount: 5000, date: formatStr(today), note: 'إيجار المحل' } }),
       db.expense.create({ data: { category: 'كهرباء', amount: 1200, date: formatStr(today), note: 'فاتورة الكهرباء' } }),
       db.expense.create({ data: { category: 'مرتبات', amount: 8000, date: formatStr(today), note: 'مرتب موظفين' } }),
     ])

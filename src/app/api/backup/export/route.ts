@@ -10,28 +10,24 @@ export async function GET(request: NextRequest) {
   if (ownerError) return ownerError
 
   try {
-    const [users, suppliers, products, customers, sales, installments, contactLogs, expenses] =
+    const [users, suppliers, products, customers, sales, expenses] =
       await Promise.all([
         db.user.findMany({ select: { id: true, name: true, role: true, createdAt: true, updatedAt: true } }),
         db.supplier.findMany(),
         db.product.findMany(),
         db.customer.findMany(),
         db.sale.findMany(),
-        db.installment.findMany(),
-        db.contactLog.findMany(),
         db.expense.findMany(),
       ])
 
     return NextResponse.json({
       version: '1.0',
       exportDate: new Date().toISOString(),
-      users,      // PINs excluded
+      users,
       suppliers,
       products,
       customers,
       sales,
-      installments,
-      contactLogs,
       expenses,
     })
   } catch (error) {

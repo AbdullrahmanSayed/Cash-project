@@ -2,14 +2,13 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { useAppStore, type Page } from '@/lib/store'
-import { AlertTriangle, Bell, Menu, Package } from 'lucide-react'
+import { Bell, Menu, Package } from 'lucide-react'
 
 const pageTitles: Record<Page, string> = {
   dashboard: 'لوحة التحكم',
   customers: 'العملاء',
   'customer-profile': 'ملف العميل',
   sales: 'المبيعات',
-  installments: 'الأقساط',
   products: 'المخزون',
   suppliers: 'الموردون',
   reports: 'التقارير',
@@ -20,13 +19,12 @@ const pageTitles: Record<Page, string> = {
 }
 
 interface NotificationCounts {
-  overdueCount: number
   lowStockCount: number
 }
 
 export default function AppHeader() {
   const { currentPage, setSidebarOpen, setPage } = useAppStore()
-  const [counts, setCounts] = useState<NotificationCounts>({ overdueCount: 0, lowStockCount: 0 })
+  const [counts, setCounts] = useState<NotificationCounts>({ lowStockCount: 0 })
   const [open, setOpen] = useState(false)
   const popoverRef = useRef<HTMLDivElement | null>(null)
 
@@ -37,7 +35,6 @@ export default function AppHeader() {
         if (!res.ok) return
         const d = await res.json()
         setCounts({
-          overdueCount: Number(d.overdueCount ?? 0),
           lowStockCount: Array.isArray(d.lowStock) ? d.lowStock.length : 0,
         })
       } catch {
@@ -60,7 +57,7 @@ export default function AppHeader() {
     return () => document.removeEventListener('mousedown', handler)
   }, [open])
 
-  const total = counts.overdueCount + counts.lowStockCount
+  const total = counts.lowStockCount
 
   return (
     <header className="sticky top-0 z-30 bg-[#0B0D13]/80 backdrop-blur-md border-b border-[#1E2233] px-4 py-3">
@@ -96,15 +93,6 @@ export default function AppHeader() {
                 <div className="py-1">
                   {total === 0 && (
                     <p className="px-4 py-6 text-center text-xs text-muted-foreground">لا توجد إشعارات جديدة</p>
-                  )}
-                  {counts.overdueCount > 0 && (
-                    <button
-                      onClick={() => { setPage('installments'); setOpen(false) }}
-                      className="w-full flex items-center gap-3 px-4 py-3 hover:bg-[#1A1E2A] text-right transition-colors"
-                    >
-                      <AlertTriangle className="w-4 h-4 text-red-500 flex-shrink-0" />
-                      <span className="text-sm text-red-400">{counts.overdueCount} قسط متأخر</span>
-                    </button>
                   )}
                   {counts.lowStockCount > 0 && (
                     <button

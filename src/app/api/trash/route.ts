@@ -85,18 +85,11 @@ export async function DELETE(request: NextRequest) {
     }
 
     if (type === 'customer') {
-      // Hard delete customer and all their data
       await db.$transaction(async (tx) => {
-        const sales = await tx.sale.findMany({ where: { customerId: id }, select: { id: true } })
-        for (const sale of sales) {
-          await tx.installment.deleteMany({ where: { saleId: sale.id } })
-        }
-        await tx.contactLog.deleteMany({ where: { customerId: id } })
         await tx.sale.deleteMany({ where: { customerId: id } })
         await tx.customer.delete({ where: { id } })
       })
     } else if (type === 'product') {
-      // Only hard delete if no sales
       const salesCount = await db.sale.count({ where: { productId: id } })
       if (salesCount > 0) {
         return NextResponse.json({ error: 'لا يمكن حذف منتج عليه مبيعات نهائياً' }, { status: 400 })
