@@ -1,0 +1,35 @@
+{
+  "name": "المعرض",
+  "short_name": "المعرض",
+  "description": "نظام إدارة المعرض - مبيعات كاش",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0B0D13",
+  "theme_color": "#F59E0B",
+  "orientation": "portrait-primary",
+  "lang": "ar",
+  "dir": "rtl",
+  "icons": [
+    {
+      "src": "/logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ],
+  "categories": ["business", "productivity"],
+  "shortcuts": [
+    {
+      "name": "لوحة التحكم",
+      "url": "/",
+      "description": "افتح لوحة التحكم الرئيسية"
+    }
+  ]
+}

@@ -1,0 +1,111 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  role      String   @default("employee") // owner | employee
+  pin       String   // hashed PIN
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  sales Sale[]
+}
+
+model Supplier {
+  id        String   @id @default(cuid())
+  name      String
+  phone     String   @default("")
+  notes     String   @default("")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  products Product[]
+}
+
+model Product {
+  id          String    @id @default(cuid())
+  name        String
+  category    String
+  quantity    Int       @default(0)
+  costPrice   Int       @default(0)
+  sellPrice   Int       @default(0)
+  supplierId  String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+
+  supplier Supplier? @relation(fields: [supplierId], references: [id])
+  sales    Sale[]
+
+  @@index([deletedAt])
+  @@index([supplierId])
+  @@index([quantity])
+}
+
+model Customer {
+  id         String    @id @default(cuid())
+  name       String
+  phone      String
+  nationalId String    @default("")
+  address    String    @default("")
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  deletedAt  DateTime?
+
+  sales Sale[]
+
+  @@index([deletedAt])
+  @@index([phone])
+}
+
+model Sale {
+  id               String   @id @default(cuid())
+  customerId       String
+  productId        String
+  employeeId       String
+  saleType         String   @default("cash")
+  totalPrice       Int
+  downPayment      Int      @default(0)
+  installmentCount Int      @default(0)
+  monthlyAmount    Int      @default(0)
+  startDate        String   @default("")
+  invoiceNumber    Int?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  customer Customer @relation(fields: [customerId], references: [id], onDelete: Restrict)
+  product  Product  @relation(fields: [productId], references: [id], onDelete: Restrict)
+  employee User     @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+
+  @@index([customerId])
+  @@index([productId])
+  @@index([employeeId])
+  @@index([createdAt])
+}
+
+model Expense {
+  id        String   @id @default(cuid())
+  category  String
+  amount    Int
+  date      String
+  note      String   @default("")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([date])
+  @@index([category])
+}
+
+model Setting {
+  key       String   @id
+  value     String   @default("")
+  updatedAt DateTime @updatedAt
+}

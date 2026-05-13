@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>نظام إدارة المعرض — عرض تقديمي</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+      background: #0D1117;
+      color: #E6EDF3;
+      line-height: 1.7;
+    }
+
+    /* ===== HERO ===== */
+    .hero {
+      background: linear-gradient(135deg, #0D1117 0%, #161B22 50%, #0D1117 100%);
+      padding: 80px 24px 60px;
+      text-align: center;
+      border-bottom: 1px solid #21262D;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(245,158,11,0.08) 0%, transparent 70%);
+      top: -200px; left: 50%; transform: translateX(-50%);
+    }
+    .logo-box {
+      width: 80px; height: 80px;
+      background: linear-gradient(135deg, #F59E0B, #D97706);
+      border-radius: 20px;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 24px;
+      font-size: 36px;
+      box-shadow: 0 8px 32px rgba(245,158,11,0.3);
+    }
+    .hero h1 {
+      font-size: 2.8rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #F59E0B, #FBBF24);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 16px;
+    }
+    .hero p {
+      font-size: 1.2rem;
+      color: #8B949E;
+      max-width: 600px;
+      margin: 0 auto 40px;
+    }
+    .badge {
+      display: inline-block;
+      background: rgba(245,158,11,0.1);
+      border: 1px solid rgba(245,158,11,0.3);
+      color: #F59E0B;
+      padding: 6px 18px;
+      border-radius: 50px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 24px;
+    }
+
+    /* ===== SECTION ===== */
+    section { padding: 60px 24px; max-width: 1000px; margin: 0 auto; }
+    .section-title {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: #F59E0B;
+      margin-bottom: 8px;
+    }
+    .section-sub {
+      color: #8B949E;
+      margin-bottom: 36px;
+      font-size: 1rem;
+    }
+
+    /* ===== FEATURES GRID ===== */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+    .feature-card {
+      background: #161B22;
+      border: 1px solid #21262D;
+      border-radius: 16px;
+      padding: 24px;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .feature-card:hover {
+      border-color: rgba(245,158,11,0.4);
+      transform: translateY(-2px);
+    }
+    .feature-icon {
+      font-size: 2rem;
+      margin-bottom: 12px;
+    }
+    .feature-card h3 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #E6EDF3;
+      margin-bottom: 8px;
+    }
+    .feature-card p {
+      font-size: 0.9rem;
+      color: #8B949E;
+    }
+
+    /* ===== SCREENSHOTS ===== */
+    .screens-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+    }
+    .screen-item {
+      background: #161B22;
+      border: 1px solid #21262D;
+      border-radius: 12px;
+      padding: 20px 16px;
+      text-align: center;
+    }
+    .screen-emoji { font-size: 2.5rem; margin-bottom: 10px; }
+    .screen-item h4 { font-size: 0.95rem; color: #E6EDF3; font-weight: 600; }
+
+    /* ===== PRICING ===== */
+    .pricing-card {
+      background: linear-gradient(135deg, #161B22, #1C2128);
+      border: 2px solid #F59E0B;
+      border-radius: 24px;
+      padding: 40px;
+      text-align: center;
+      max-width: 480px;
+      margin: 0 auto;
+      box-shadow: 0 0 40px rgba(245,158,11,0.15);
+    }
+    .price-amount {
+      font-size: 3.5rem;
+      font-weight: 800;
+      color: #F59E0B;
+      line-height: 1;
+      margin: 20px 0 8px;
+    }
+    .price-note { color: #8B949E; font-size: 0.9rem; margin-bottom: 32px; }
+    .price-features { text-align: right; margin-bottom: 32px; }
+    .price-features li {
+      list-style: none;
+      padding: 8px 0;
+      border-bottom: 1px solid #21262D;
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .price-features li::before { content: '✅'; flex-shrink: 0; }
+    .price-features li:last-child { border-bottom: none; }
+
+    .cta-btn {
+      display: inline-block;
+      background: linear-gradient(135deg, #F59E0B, #D97706);
+      color: #000;
+      font-weight: 800;
+      font-size: 1.1rem;
+      padding: 16px 48px;
+      border-radius: 14px;
+      text-decoration: none;
+      transition: opacity 0.2s, transform 0.2s;
+      border: none;
+      cursor: pointer;
+      width: 100%;
+    }
+    .cta-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+
+    /* ===== HOW IT WORKS ===== */
+    .steps { display: flex; flex-direction: column; gap: 20px; }
+    .step {
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+      background: #161B22;
+      border: 1px solid #21262D;
+      border-radius: 16px;
+      padding: 24px;
+    }
+    .step-num {
+      width: 44px; height: 44px;
+      background: linear-gradient(135deg, #F59E0B, #D97706);
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800;
+      font-size: 1.1rem;
+      color: #000;
+      flex-shrink: 0;
+    }
+    .step h4 { font-size: 1rem; font-weight: 700; margin-bottom: 6px; }
+    .step p { font-size: 0.9rem; color: #8B949E; }
+
+    /* ===== TECH ===== */
+    .tech-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .pill {
+      background: #161B22;
+      border: 1px solid #21262D;
+      border-radius: 50px;
+      padding: 8px 18px;
+      font-size: 0.85rem;
+      color: #8B949E;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* ===== DIVIDER ===== */
+    .divider {
+      border: none;
+      border-top: 1px solid #21262D;
+      margin: 0;
+    }
+
+    /* ===== FOOTER ===== */
+    footer {
+      text-align: center;
+      padding: 40px 24px;
+      color: #484F58;
+      font-size: 0.85rem;
+      border-top: 1px solid #21262D;
+    }
+
+    /* ===== GUARANTEE ===== */
+    .guarantee {
+      background: rgba(34,197,94,0.05);
+      border: 1px solid rgba(34,197,94,0.2);
+      border-radius: 16px;
+      padding: 24px;
+      text-align: center;
+      margin-top: 24px;
+    }
+    .guarantee h3 { color: #4ADE80; font-size: 1.1rem; margin-bottom: 8px; }
+    .guarantee p { color: #8B949E; font-size: 0.9rem; }
+
+    @media (max-width: 640px) {
+      .hero h1 { font-size: 2rem; }
+      .price-amount { font-size: 2.5rem; }
+      section { padding: 40px 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="badge">🚀 نظام متكامل — دفعة واحدة فقط</div>
+  <div class="logo-box">🏪</div>
+  <h1>نظام إدارة المعرض</h1>
+  <p>حل رقمي متكامل لإدارة مبيعات التقسيط، العملاء، المنتجات، والموردين — من أي جهاز وفي أي وقت</p>
+</div>
+
+<!-- FEATURES -->
+<section>
+  <p class="section-title">كل اللي محتاجه في مكان واحد</p>
+  <p class="section-sub">مصمم خصيصاً لمعارض البيع بالتقسيط</p>
+
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon">👥</div>
+      <h3>إدارة العملاء</h3>
+      <p>سجّل بيانات عملائك كاملة مع سجل المشتريات والأقساط لكل عميل بضغطة واحدة</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📦</div>
+      <h3>إدارة المنتجات والمخزون</h3>
+      <p>تتبع كميات المخزون تلقائياً، وتنبيهات لما المنتج يوشك على النفاد</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">💰</div>
+      <h3>نظام الأقساط الذكي</h3>
+      <p>جدولة الأقساط تلقائياً مع تتبع المدفوع والمتبقي لكل عميل بدقة</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📊</div>
+      <h3>تقارير وإحصاءات</h3>
+      <p>رسوم بيانية للمبيعات والأرباح، وتقرير العائد على رأس المال (ROI)</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">💬</div>
+      <h3>تذكيرات WhatsApp</h3>
+      <p>أرسل تذكيرات للعملاء بمواعيد الأقساط عبر WhatsApp بنقرة واحدة</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📧</div>
+      <h3>تقرير يومي بالإيميل</h3>
+      <p>يصلك تقرير تلقائي كل صباح بالأقساط المستحقة واللي تأخرت</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🏭</div>
+      <h3>إدارة الموردين</h3>
+      <p>سجّل موردينك وربط كل منتج بموردّه لتسهيل عمليات الشراء والمتابعة</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🔒</div>
+      <h3>صلاحيات متعددة</h3>
+      <p>حساب صاحب المعرض بصلاحيات كاملة، وحسابات موظفين محدودة الوصول</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🗑️</div>
+      <h3>سلة المحذوفات</h3>
+      <p>أي بيانات تحذفها تقدر ترجعها في أي وقت — مفيش بيانات تضيع</p>
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- SCREENS -->
+<section>
+  <p class="section-title">شاشات النظام</p>
+  <p class="section-sub">واجهة عربية بالكامل، تعمل على الموبايل والكمبيوتر</p>
+
+  <div class="screens-grid">
+    <div class="screen-item">
+      <div class="screen-emoji">📈</div>
+      <h4>لوحة التحكم</h4>
+    </div>
+    <div class="screen-item">
+      <div class="screen-emoji">🧾</div>
+      <h4>إضافة بيع جديد</h4>
+    </div>
+    <div class="screen-item">
+      <div class="screen-emoji">📅</div>
+      <h4>جدول الأقساط</h4>
+    </div>
+    <div class="screen-item">
+      <div class="screen-emoji">👤</div>
+      <h4>ملف العميل</h4>
+    </div>
+    <div class="screen-item">
+      <div class="screen-emoji">📉</div>
+      <h4>تقارير الأرباح</h4>
+    </div>
+    <div class="screen-item">
+      <div class="screen-emoji">⚙️</div>
+      <h4>إعدادات المعرض</h4>
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- HOW IT WORKS -->
+<section>
+  <p class="section-title">إزاي يشتغل؟</p>
+  <p class="section-sub">من الشراء للتشغيل في أقل من 24 ساعة</p>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div>
+        <h4>الدفع وتجهيز النظام</h4>
+        <p>بعد الدفع، بنجهّزلك النظام بالكامل على سيرفر خاص بيك في أقل من ساعة</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div>
+        <h4>إعداد بيانات المعرض</h4>
+        <p>بتدخل اسم المعرض وبياناتك عبر wizard سهل في 3 خطوات بسيطة</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div>
+        <h4>تبدأ الشغل فوراً</h4>
+        <p>السيستم جاهز — ابدأ تسجيل عملائك ومنتجاتك ومبيعاتك من أي جهاز</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <div>
+        <h4>دعم فني مستمر</h4>
+        <p>فريق الدعم متاح لمساعدتك في أي استفسار أو مشكلة</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- PRICING -->
+<section>
+  <p class="section-title" style="text-align:center">السعر</p>
+  <p class="section-sub" style="text-align:center">دفعة واحدة — ملكية كاملة — بدون اشتراك شهري</p>
+
+  <div class="pricing-card">
+    <div class="badge">الأكثر طلباً</div>
+    <div class="price-amount">3,500 ج.م</div>
+    <p class="price-note">دفعة واحدة فقط · لا رسوم شهرية</p>
+
+    <ul class="price-features">
+      <li>نظام متكامل لإدارة المعرض</li>
+      <li>رابط إنترنت خاص بمعرضك</li>
+      <li>يعمل على الموبايل والكمبيوتر</li>
+      <li>تقارير وإحصاءات شاملة</li>
+      <li>تذكيرات WhatsApp للعملاء</li>
+      <li>تقرير يومي بالإيميل</li>
+      <li>نسخ احتياطي كامل للبيانات</li>
+      <li>تدريب على استخدام النظام</li>
+      <li>دعم فني لمدة 3 أشهر</li>
+    </ul>
+
+    <a href="https://wa.me/201XXXXXXXXX?text=عايز%20أعرف%20أكتر%20عن%20نظام%20إدارة%20المعرض" class="cta-btn">
+      تواصل معنا الآن 💬
+    </a>
+  </div>
+
+  <div class="guarantee">
+    <h3>🛡️ ضمان استرداد كامل</h3>
+    <p>لو مش راضي عن النظام خلال 7 أيام من الاستلام — بنرجعلك فلوسك كاملة بدون أي شروط</p>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- TECH -->
+<section>
+  <p class="section-title">التقنيات المستخدمة</p>
+  <p class="section-sub">نظام حديث وآمن مبني بأحدث التقنيات</p>
+
+  <div class="tech-pills">
+    <span class="pill">⚡ Next.js 16</span>
+    <span class="pill">🔒 تشفير البيانات</span>
+    <span class="pill">☁️ Vercel Cloud</span>
+    <span class="pill">🗄️ Neon PostgreSQL</span>
+    <span class="pill">📱 Responsive Design</span>
+    <span class="pill">🔑 HttpOnly Cookies</span>
+    <span class="pill">✅ Zod Validation</span>
+    <span class="pill">🌐 SSL مجاني</span>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p>نظام إدارة المعرض &mdash; حقوق محفوظة © 2025</p>
+  <p style="margin-top:8px">صُمِّم وطُوِّر بالكامل للسوق المصري 🇪🇬</p>
+</footer>
+
+</body>
+</html>
